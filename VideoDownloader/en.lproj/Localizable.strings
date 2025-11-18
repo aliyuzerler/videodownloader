@@ -1,0 +1,43 @@
+/* 
+  Localizable.strings
+  VideoDownloader
+
+  Created by mac on 7/16/25.
+  
+*/
+
+"Reklamları Kaldır" = "Remove Ads";
+"Reklamsız deneyimin tadını çıkarın!" = "Enjoy an ad-free experience!";
+"HD Video İndir" = "Download HD Video";
+"Videoların kalite kaybı olmadan indirin!" = "Download videos without quality loss";
+"Satın Al" = "Purchase";
+"Aylık" = "Monthly";
+"Geri Yükle" = "Restore Purchase";
+"Gizlilik Politikası" = "Privacy Policy";
+"Ödeme işlemi başarısız oldu" = "Payment failed";
+"Satın alma işlemi başarılı. Abonesiniz." = "Purchase successful. You are subscribed.";
+"Başarılı" = "Success";
+"Tamam" = "OK";
+"Profil fotoğraflarını kalite kaybı olmadan indirin!" = "Save videos in high quality!";
+"History" = "History";
+"Link kopyalandı!" = "Copied!";
+"Tüm Geçmişi Sil" = "Delete history";
+"Tüm geçmişi silmek istediğine emin misin?" = "Are you sure you want to clear all history?";
+"Vazgeç" = "Cancel";
+"Sil" = "Continue";
+"No history found" = "No history found";
+"Link Kopyala" = "Copy Link";
+"Kopyala" = "Copy #hashtags";
+"En popüler 50 #hashtag" = "Top 50 Most Popular #Hashtags";
+"Video Linki" = "Video Link";
+"Bul" = "Video Download";
+"Video veya resimler nasıl indirilir ?" = "How to download videos?";
+"Yükleniyor..." = "Downloading...";
+"Paylaş" = "Share";
+"İndir" = "Download";
+"Önizleme" = "Preview";
+"step_1_info" = "Tap the 'Share' button on the video";
+"step_2_info" = "Tap the 'Copy Link' button on the opened screen";
+"step_3_info" = "Open this app and tap the 'Paste' button";
+"Purchasing"  = "Purchasing...";
+"Hata" = "Error";

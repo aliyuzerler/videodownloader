@@ -1,0 +1,44 @@
+/* 
+  Localizable.strings
+  VideoDownloader
+
+  Created by mac on 7/16/25.
+  
+*/
+
+"Reklamları Kaldır" = "Reklamları Kaldır";
+"Reklamsız deneyimin tadını çıkarın!" = "Reklamsız deneyimin tadını çıkarın!";
+"HD Video İndir" = "HD Video İndir";
+"Videoların kalite kaybı olmadan indirin!" = "Videoların kalite kaybı olmadan indirin";
+"Satın Al" = "Satın Al";
+"Aylık" = "Aylık";
+"Geri Yükle" = "Geri Yükle";
+"Gizlilik Politikası" = "Gizlilik Politikası";
+"Ödeme işlemi başarısız oldu" = "Ödeme işlemi başarısız oldu";
+"Satın alma işlemi başarılı. Abonesiniz." = "Satın alma işlemi başarılı. Abonesiniz.";
+"Başarılı" = "Başarılı";
+"Tamam" = "Tamam";
+"Profil fotoğraflarını kalite kaybı olmadan indirin!" = "Videolarınızı kalite kaybı olmadan indirin!";
+"History" = "Download Geçmişi";
+"Link kopyalandı!" = "Link kopyalandı!";
+"Tüm Geçmişi Sil" = "Tüm Geçmişi Sil";
+"Tüm geçmişi silmek istediğine emin misin?" = "Tüm geçmişi silmek istediğine emin misin?";
+"Vazgeç" = "Vazgeç";
+"Sil" = "Sil";
+"No history found" = "Henüz veri yok";
+"Link Kopyala" = "Link Kopyala";
+"Kopyala" = "Kopyala";
+"En popüler 50 #hashtag" = "En popüler 50 #hashtag";
+"Video Linki" = "Video Linki";
+"Bul" = "Video İndir";
+"Video veya resimler nasıl indirilir ?" = "Video veya resimler nasıl indirilir ?";
+"Yükleniyor..." = "Yükleniyor...";
+"Paylaş" = "Paylaş";
+"İndir" = "İndir";
+"Önizleme" = "Önizleme";
+"step_1_info" = "Videosunda ‘Paylaş’ butonuna basın";
+"step_2_info" = "Açılan ekranda ‘Bağlantıyı Kopyala’ Butonuna Basın";
+"step_3_info" = "Bu uygulamayı açın ve ‘Yapıştır’ butonuna basın";
+"Purchasing"  = "Satın Alınıyor...";
+"Hata" = "Hata";
+
