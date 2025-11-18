@@ -70,6 +70,14 @@ jobs:
         # Build klasörünü oluştur
         mkdir -p ./build
         
+        # TEAM_ID kontrolü
+        if [ -z "$TEAM_ID" ]; then
+          echo "❌ TEAM_ID secret'ı bulunamadı!"
+          echo "📋 GitHub Secrets'a TEAM_ID ekleyin: NJRDK44KQ5"
+          exit 1
+        fi
+        echo "✅ TEAM_ID: $TEAM_ID"
+        
         # Proje yapısını kontrol et
         if [ -f "VideoDownloader.xcworkspace/contents.xcworkspacedata" ]; then
           echo "📦 Workspace bulundu, workspace ile build alınıyor..."
@@ -82,12 +90,8 @@ jobs:
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CODE_SIGN_STYLE="Automatic" \
             -destination "generic/platform=iOS" \
-            2>&1 | tee build.log || {
-              echo "❌ Build başarısız!"
-              echo "📋 Build log:"
-              tail -100 build.log
-              exit 1
-            }
+            2>&1 | tee build.log
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
         else
           echo "📦 Project bulundu, project ile build alınıyor..."
           xcodebuild clean archive \
@@ -99,23 +103,44 @@ jobs:
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CODE_SIGN_STYLE="Automatic" \
             -destination "generic/platform=iOS" \
-            2>&1 | tee build.log || {
-              echo "❌ Build başarısız!"
-              echo "📋 Build log:"
-              tail -100 build.log
-              exit 1
-            }
+            2>&1 | tee build.log
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+        fi
+        
+        # Build sonucunu kontrol et
+        if [ $BUILD_EXIT_CODE -ne 0 ]; then
+          echo "❌ Build başarısız! Exit code: $BUILD_EXIT_CODE"
+          echo "📋 Build log (son 100 satır):"
+          tail -100 build.log
+          echo ""
+          echo "📋 Build log (hata mesajları):"
+          grep -i "error" build.log | tail -20 || echo "Hata mesajı bulunamadı"
+          exit 1
+        fi
+        
+        # Archive'nin oluşturulduğunu kontrol et
+        if [ ! -d "./build/VideoDownloader.xcarchive" ]; then
+          echo "❌ Archive oluşturulamadı!"
+          echo "📋 Build log (son 50 satır):"
+          tail -50 build.log
+          exit 1
         fi
         
         echo "✅ Archive başarıyla oluşturuldu!"
+        echo "📦 Archive yolu: ./build/VideoDownloader.xcarchive"
+        ls -lh ./build/VideoDownloader.xcarchive
     
     - name: Export IPA
       run: |
         # Export klasörünü kontrol et
+        echo "🔍 Archive kontrolü yapılıyor..."
         if [ ! -d "./build/VideoDownloader.xcarchive" ]; then
           echo "❌ Archive bulunamadı!"
+          echo "📋 Build klasörü içeriği:"
+          ls -la ./build/ || echo "Build klasörü yok"
           exit 1
         fi
+        echo "✅ Archive bulundu!"
         
         echo "📦 IPA export ediliyor..."
         xcodebuild -exportArchive \
