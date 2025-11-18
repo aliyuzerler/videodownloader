@@ -63,8 +63,8 @@ jobs:
             -configuration Release \
             -archivePath ./build/VideoDownloader.xcarchive \
             -allowProvisioningUpdates \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM="$TEAM_ID"
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE="Automatic"
         else
           echo "📦 Project bulundu, project ile build alınıyor..."
           xcodebuild clean archive \
@@ -73,8 +73,8 @@ jobs:
             -configuration Release \
             -archivePath ./build/VideoDownloader.xcarchive \
             -allowProvisioningUpdates \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM="$TEAM_ID"
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE="Automatic"
         fi
     
     - name: Export IPA
