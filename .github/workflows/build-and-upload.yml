@@ -152,6 +152,8 @@ jobs:
     - name: Export IPA
       env:
         TEAM_ID: ${{ secrets.TEAM_ID }}
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
       run: |
         # Export klasörünü kontrol et
         echo "🔍 Archive kontrolü yapılıyor..."
@@ -172,6 +174,19 @@ jobs:
           exit 0  # Hata vermeden devam et, archive'ı yükle
         fi
         echo "✅ TEAM_ID: $TEAM_ID"
+        
+        # APPLE_ID kontrolü
+        if [ -z "$APPLE_ID" ] || [ -z "$APPLE_APP_SPECIFIC_PASSWORD" ]; then
+          echo "⚠️ APPLE_ID veya APPLE_APP_SPECIFIC_PASSWORD secret'ı bulunamadı!"
+          echo "📋 GitHub Secrets'a şu secret'ları ekleyin:"
+          echo "   - APPLE_ID: Apple Developer e-posta adresiniz"
+          echo "   - APPLE_APP_SPECIFIC_PASSWORD: uwpw-slrs-mgqv-bket"
+          echo "📦 Archive mevcut, ancak IPA export edilemiyor."
+          echo "💡 Alternatif: Archive'ı artifact olarak yükleyebilirsiniz (Xcode'da export edebilirsiniz)"
+          exit 0  # Hata vermeden devam et, archive'ı yükle
+        fi
+        echo "✅ APPLE_ID: $APPLE_ID"
+        echo "✅ APPLE_APP_SPECIFIC_PASSWORD: *** (gizli)"
         
         # Export klasörünü temizle
         rm -rf ./build/export
