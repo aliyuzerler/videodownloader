@@ -161,11 +161,15 @@ jobs:
         fi
         echo "✅ Archive bulundu!"
         
+        # Export klasörünü temizle
+        rm -rf ./build/export
+        mkdir -p ./build/export
+        
         echo "📦 IPA export ediliyor..."
         xcodebuild -exportArchive \
           -archivePath ./build/VideoDownloader.xcarchive \
           -exportOptionsPlist ./exportOptions.plist \
-          -exportPath ./build \
+          -exportPath ./build/export \
           2>&1 | tee export.log || {
             echo "❌ Export başarısız!"
             echo "📋 Export log:"
@@ -173,15 +177,35 @@ jobs:
             exit 1
           }
         
+        # IPA dosyasını bul ve build klasörüne taşı
+        echo "🔍 IPA dosyası aranıyor..."
+        if [ -f "./build/export/VideoDownloader.ipa" ]; then
+          mv ./build/export/VideoDownloader.ipa ./build/VideoDownloader.ipa
+          echo "✅ IPA dosyası bulundu ve taşındı!"
+        elif [ -f "./build/export/*.ipa" ]; then
+          mv ./build/export/*.ipa ./build/VideoDownloader.ipa
+          echo "✅ IPA dosyası bulundu ve taşındı!"
+        else
+          echo "⚠️ IPA dosyası beklenen yerde bulunamadı"
+          echo "📋 Export klasörü içeriği:"
+          ls -la ./build/export/ || echo "Export klasörü yok"
+          echo "📋 Build klasörü içeriği:"
+          ls -la ./build/ || echo "Build klasörü yok"
+          echo "📋 Tüm alt klasörler:"
+          find ./build -name "*.ipa" -type f 2>/dev/null || echo "IPA dosyası bulunamadı"
+          exit 1
+        fi
+        
         echo "✅ IPA başarıyla export edildi!"
-        ls -lh ./build/*.ipa || echo "⚠️ IPA dosyası bulunamadı"
+        ls -lh ./build/VideoDownloader.ipa
     
     - name: Upload IPA as artifact
       uses: actions/upload-artifact@v4
       with:
         name: ios-app-${{ github.run_number }}
-        path: build/*.ipa
+        path: build/VideoDownloader.ipa
         retention-days: 30
+        if-no-files-found: error
     
     - name: Build Summary
       run: |
