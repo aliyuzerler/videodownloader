@@ -111,6 +111,14 @@ struct Premium: View {
                     if let product = storeManager.getProductPrice(id: Constants.WEEKLY_SUBID) {
                         isLoading = true
                         storeManager.purchase(product: product)
+                    } else {
+                        // Ürün henüz yüklenmemiş veya bulunamadı
+                        storeManager.isError = true
+                        if storeManager.products.isEmpty {
+                            storeManager.errorMessage = "Ürün bilgileri yükleniyor. Lütfen bekleyin."
+                        } else {
+                            storeManager.errorMessage = "Ürün bulunamadı. Lütfen App Store Connect'te '\(Constants.WEEKLY_SUBID)' ID'li ürünün yapılandırıldığından emin olun."
+                        }
                     }
                 }) {
                     Group {
@@ -227,18 +235,15 @@ struct Premium: View {
         }
         .edgesIgnoringSafeArea(.top) // Resmin üst kısmı ekranın üst kısmına kadar gider
         .onAppear {
-            
-            // Satın al butonunun titremesini başlatıyoruz
-//            withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-//                moveLeftToRight.toggle() // Titremeyi başlatıyoruz
-//            }
-
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                if !storeManager.products.isEmpty {
-                    btnTitle = "Satın Al".localizable + " " + storeManager.formattedPrice(for: storeManager.products[0]) + "/" + "Aylık".localizable
-                    isProductLoaded = true
-                }
+            // İlk yükleme için kontrol
+            if !storeManager.products.isEmpty {
+                updateButtonTitle()
+            }
+        }
+        .onChange(of: storeManager.products) { products in
+            // Ürünler yüklendiğinde buton başlığını güncelle
+            if !products.isEmpty {
+                updateButtonTitle()
             }
         }
         .alert(isPresented: $showAlertNeg) {
@@ -282,6 +287,17 @@ struct Premium: View {
         }
         .fullScreenCover(isPresented: $mainViewToggle){
             MainView()
+        }
+    }
+    
+    // Helper function: Buton başlığını güncelle
+    private func updateButtonTitle() {
+        if let product = storeManager.getProductPrice(id: Constants.WEEKLY_SUBID) {
+            btnTitle = "Satın Al".localizable + " " + storeManager.formattedPrice(for: product) + "/" + "Haftalık".localizable
+            isProductLoaded = true
+        } else {
+            // Ürün bulunamadı, buton başlığını güncelleme
+            isProductLoaded = false
         }
     }
 }

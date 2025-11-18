@@ -86,12 +86,14 @@ class StoreManager: NSObject, ObservableObject, SKProductsRequestDelegate, SKPay
     }
     
     func getProductPrice(id: String) -> SKProduct? {
-        
-        return products.first(where: { $0.productIdentifier.contains(id) })
+        // Tam eşleşme kullan (contains yerine ==)
+        // contains yanlış eşleşmelere yol açabilir (örn: remove_ads_new_2 de eşleşebilir)
+        return products.first(where: { $0.productIdentifier == id })
     }
     
     func getProductPrice2(id: String) -> String {
-        products.first { $0.productIdentifier.contains(id) }.map { product in
+        // Tam eşleşme kullan (contains yerine ==)
+        products.first { $0.productIdentifier == id }.map { product in
             let formatter = NumberFormatter()
             formatter.numberStyle = .currency
             formatter.locale = product.priceLocale

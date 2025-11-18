@@ -36,6 +36,16 @@ jobs:
     - name: Show Xcode version
       run: xcodebuild -version
     
+    - name: Setup Keychain for Code Signing
+      run: |
+        # Keychain oluştur ve ayarla (otomatik signing için gerekli)
+        security create-keychain -p "" build.keychain || true
+        security default-keychain -s build.keychain
+        security unlock-keychain -p "" build.keychain
+        security set-keychain-settings -t 3600 -u build.keychain
+        security list-keychains -d user -s build.keychain
+        echo "✅ Keychain hazırlandı"
+    
     - name: Update version and build number
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.version != ''
       run: |
