@@ -166,16 +166,30 @@ jobs:
         mkdir -p ./build/export
         
         echo "📦 IPA export ediliyor..."
+        echo "🔐 Code signing için TEAM_ID kullanılıyor: $TEAM_ID"
+        
+        # Export işlemini TEAM_ID ile yap
         xcodebuild -exportArchive \
           -archivePath ./build/VideoDownloader.xcarchive \
           -exportOptionsPlist ./exportOptions.plist \
           -exportPath ./build/export \
-          2>&1 | tee export.log || {
-            echo "❌ Export başarısız!"
-            echo "📋 Export log:"
-            tail -100 export.log
-            exit 1
-          }
+          -allowProvisioningUpdates \
+          2>&1 | tee export.log
+        
+        EXPORT_EXIT_CODE=${PIPESTATUS[0]}
+        
+        if [ $EXPORT_EXIT_CODE -ne 0 ]; then
+          echo "❌ Export başarısız! Exit code: $EXPORT_EXIT_CODE"
+          echo "📋 Export log (son 100 satır):"
+          tail -100 export.log
+          echo ""
+          echo "📋 Export log (hata mesajları):"
+          grep -i "error" export.log | tail -20 || echo "Hata mesajı bulunamadı"
+          echo ""
+          echo "⚠️ Code signing hatası! Apple Developer hesabı gerekli olabilir."
+          echo "📋 Çözüm: GitHub Secrets'a APPLE_ID ve APPLE_APP_SPECIFIC_PASSWORD ekleyin"
+          exit 1
+        fi
         
         # IPA dosyasını bul ve build klasörüne taşı
         echo "🔍 IPA dosyası aranıyor..."
