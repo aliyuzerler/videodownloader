@@ -24,6 +24,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        submodules: false  # Submodule'leri atla (git hatasını önler)
+        fetch-depth: 0  # Tüm commit geçmişini al
     
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
@@ -64,6 +67,9 @@ jobs:
       env:
         TEAM_ID: ${{ secrets.TEAM_ID }}
       run: |
+        # Build klasörünü oluştur
+        mkdir -p ./build
+        
         # Proje yapısını kontrol et
         if [ -f "VideoDownloader.xcworkspace/contents.xcworkspacedata" ]; then
           echo "📦 Workspace bulundu, workspace ile build alınıyor..."
@@ -74,7 +80,14 @@ jobs:
             -archivePath ./build/VideoDownloader.xcarchive \
             -allowProvisioningUpdates \
             DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE="Automatic"
+            CODE_SIGN_STYLE="Automatic" \
+            -destination "generic/platform=iOS" \
+            2>&1 | tee build.log || {
+              echo "❌ Build başarısız!"
+              echo "📋 Build log:"
+              tail -100 build.log
+              exit 1
+            }
         else
           echo "📦 Project bulundu, project ile build alınıyor..."
           xcodebuild clean archive \
@@ -84,15 +97,40 @@ jobs:
             -archivePath ./build/VideoDownloader.xcarchive \
             -allowProvisioningUpdates \
             DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE="Automatic"
+            CODE_SIGN_STYLE="Automatic" \
+            -destination "generic/platform=iOS" \
+            2>&1 | tee build.log || {
+              echo "❌ Build başarısız!"
+              echo "📋 Build log:"
+              tail -100 build.log
+              exit 1
+            }
         fi
+        
+        echo "✅ Archive başarıyla oluşturuldu!"
     
     - name: Export IPA
       run: |
+        # Export klasörünü kontrol et
+        if [ ! -d "./build/VideoDownloader.xcarchive" ]; then
+          echo "❌ Archive bulunamadı!"
+          exit 1
+        fi
+        
+        echo "📦 IPA export ediliyor..."
         xcodebuild -exportArchive \
           -archivePath ./build/VideoDownloader.xcarchive \
           -exportOptionsPlist ./exportOptions.plist \
-          -exportPath ./build
+          -exportPath ./build \
+          2>&1 | tee export.log || {
+            echo "❌ Export başarısız!"
+            echo "📋 Export log:"
+            tail -100 export.log
+            exit 1
+          }
+        
+        echo "✅ IPA başarıyla export edildi!"
+        ls -lh ./build/*.ipa || echo "⚠️ IPA dosyası bulunamadı"
     
     - name: Upload IPA as artifact
       uses: actions/upload-artifact@v4
