@@ -19,11 +19,11 @@ class GoogleMobileAdsConsentManager: NSObject {
   static let shared = GoogleMobileAdsConsentManager()
 
   var canRequestAds: Bool {
-    return UMPConsentInformation.sharedInstance.canRequestAds
+    return ConsentInformation.shared.canRequestAds
   }
 
   var isPrivacyOptionsRequired: Bool {
-    return UMPConsentInformation.sharedInstance.privacyOptionsRequirementStatus == .required
+    return ConsentInformation.shared.privacyOptionsRequirementStatus == .required
   }
 
   /// Helper method to call the UMP SDK methods to request consent information and load/present a
@@ -32,15 +32,15 @@ class GoogleMobileAdsConsentManager: NSObject {
     from viewController: UIViewController? = nil,
     consentGatheringComplete: @escaping (Error?) -> Void
   ) {
-    let parameters = UMPRequestParameters()
+    let parameters = RequestParameters()
 
-    // For testing purposes, you can use UMPDebugGeography to simulate a location.
-    let debugSettings = UMPDebugSettings()
-    // debugSettings.geography = UMPDebugGeography.EEA
+    // For testing purposes, you can use DebugGeography to simulate a location.
+    let debugSettings = DebugSettings()
+    // debugSettings.geography = DebugGeography.EEA
     parameters.debugSettings = debugSettings
 
     // Requesting an update to consent information should be called on every app launch.
-    UMPConsentInformation.sharedInstance.requestConsentInfoUpdate(with: parameters) {
+    ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) {
       requestConsentError in
       guard requestConsentError == nil else {
         return consentGatheringComplete(requestConsentError)
@@ -48,7 +48,7 @@ class GoogleMobileAdsConsentManager: NSObject {
 
       Task { @MainActor in
         do {
-          try await UMPConsentForm.loadAndPresentIfRequired(from: viewController)
+          try await ConsentForm.loadAndPresentIfRequired(from: viewController)
           // Consent has been gathered.
           consentGatheringComplete(nil)
         } catch {
@@ -62,6 +62,6 @@ class GoogleMobileAdsConsentManager: NSObject {
   @MainActor func presentPrivacyOptionsForm(from viewController: UIViewController? = nil)
     async throws
   {
-    try await UMPConsentForm.presentPrivacyOptionsForm(from: viewController)
+    try await ConsentForm.presentPrivacyOptionsForm(from: viewController)
   }
 }
